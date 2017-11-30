@@ -54,18 +54,6 @@ app.get('/getnewproblem', function(req, res) {
     res.send(response);
 });
 
-app.get('/jquery-3.2.1.js', function(req, res) {
-        fs.readFile('js/jquery-3.2.1.js', function(err, data) {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            res.contentType('text/javascript');
-            res.send(data);
-        }
-    });
-});
-
 app.get('/mine', function(req, res) {
     fs.readFile('html/user.html', function(err, data) {
         if (err) {
