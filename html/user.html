@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>title</title>
+
+    <script src="jquery-3.2.1.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    -->
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  </head>
+
+  <style>
+
+    body {
+      background-color: #d3d3d3;
+    }
+
+    table {
+      border-collapse: separate;
+      border-spacing: 0.5em;
+      width: auto !important;
+    }
+
+    th, td {
+      border-top: none !important; 
+    }
+
+  </style>
+  <body>
+
+    <div align="center">
+      <h3>
+        Mining Simulation
+      </h3>
+
+      <h4>
+        Instructions
+      </h4>
+
+      <ol style="width:300px; text-align: left; margin: 0px auto">
+        <li>Enter your name.</li>
+        <li>Solve the math problem and submit your answer to mine bitcoin.</li>
+        <li>Once you've solved the problem correctly, a new math problem will appear.</li>
+        <li>Solve as many problems as you can. Good luck!</li>
+      </ol>
+    </div>
+
+
+
+    <table class="table" align="center">
+      <tr>
+        <td><b>Name:</b></td>
+        <td><input type="text" id="username"></td>
+      </tr>
+      <tr>
+        <td><text id="problem"></text></td>
+        <td><input type="text" id="answer"></td>
+      </tr>
+      <tr>
+        <td colspan='2' align="center">
+          <button style="width:100%" class="btn-primary" align="center" type="button" id="submitButton" onclick="sendAnswer()">Submit Answer</button>
+        </td>
+      </tr>
+      <tr>
+        <td colspan='2' rowspan='2' align="center">
+          <div>
+            <p style="color: white; border-radius: 4px; padding: 5px; width:200px; text-align: center; margin: 0px auto" id="feedback" style="width:300px; text-align: center; margin: 0px auto">feedback</p>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <script type="text/javascript">
+
+      var problem = null;
+
+      function clearFeedback() {
+        $('#feedback').css('display', 'none');
+      }
+
+      function getNewProblem() {
+        problemElement = document.getElementById('problem');
+        $.get('/getnewproblem', null, function(data, status, jqXhr) {
+          problem = data.problem;
+          $('#problem').text('' + problem.first + ' ' + problem.op + ' ' + problem.second + ' =');
+          $('#answer').val('');
+          $('#submitButton').prop('disabled', false);
+          clearFeedback();
+          console.log(data);
+        });
+      }
+
+      function correctAnswer() {
+        $("#feedback").text("Correct!");
+        $('#submitButton').prop('disabled', true);
+
+        setTimeout(function() {
+          getNewProblem();
+        }, 600);
+      }
+
+      function sendAnswer() {
+        var postBody = {};
+        postBody.answer = parseInt($("#answer").val());
+        postBody.problem = {};
+        Object.assign(postBody.problem, problem);
+        postBody.userId = $('#username').val();
+        postBody.problem.op = encodeURIComponent(postBody.problem.op);
+        $.post('/solveproblem', 'content=' + JSON.stringify(postBody), function(data, status, jqXhr) {
+          console.log('sent answer and received answer:', data);
+          $('#feedback').css('display', 'block');
+          if (!data.err) {
+            $('#feedback').css('background-color', '#007e33');
+            correctAnswer();
+          }
+          else {
+            $('#feedback').css('background-color', '#ff4444');
+            if (data.err == 'username') {
+              $('#feedback').text('Invalid username. Please use only letters, numbers, and spaces.');
+            }
+            else if (data.err == 'answer') {
+              $('#feedback').text('Incorrect answer. Please try again.');
+            }
+          }
+        });
+      }
+
+      getNewProblem();
+      
+    </script>
+  </body>
+</html>
