@@ -17,7 +17,6 @@ const single = {
     amount: 0
 }
 
-
 var problemIdCounter = 0;
 
 const ops = ['+', '-', '*'];
