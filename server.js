@@ -4,7 +4,7 @@ const app = express();
 const fs = require('fs')
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-const port = 8080;
+const port = 80;
 const miningRate = 0.001;
 
 const group = {
