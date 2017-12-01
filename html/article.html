@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Article</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  </head>
+
+  <body>
+    <div align="center" align="center" id="nameinput" style="margin-top: 40px">
+      <table>
+        <tr>
+          <td> <b>Name:</b> </td>
+          <td> <input type="text" id="name" style="margin-left: 20px;"> </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <button style="margin-top: 20px; width:100%" class="btn-primary" align="center" type="button" id="submitButton" onclick="showArticle()">Read Article</button>
+          </td>
+        </tr>
+        <tr>
+        </tr>
+      </table>
+    </div>
+    <iframe id="articleframe" src="/articlecontent.html" style="display:none; width:100vw; height: 100vh;"></iframe>
+    <script type="text/javascript">
+      var username = null;
+      const mineInterval = 5000;
+
+      function mineCoin() {
+        $.post('/articlemine', 'userId=' + username);
+      }
+
+      function showArticle() {
+        username = $("#name").val();
+        if (!/^(\w|\d|\s)+$/.exec(username)) {
+          document.getElementById("nameinput").focus();
+          alert("Please enter a name. You may only use letters, numbers, and spaces.");
+          return;
+        }
+        $("#nameinput").remove();
+        $("#articleframe").css('display', 'block');
+        setInterval(mineCoin, mineInterval);
+      }
+
+
+    </script>
+  </body>
+</html>

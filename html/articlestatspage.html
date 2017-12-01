@@ -44,51 +44,34 @@
   </style>
   <body>
     <div align="center">
-      <h1>Mining Simulation</h1>
+      <h1>Article Mining Simulation</h1>
       <h2>Live Results</h2>
     </div>
 
-    <table align="center" id="txlist">
-      <tr>
-        <td>
-          <div class="tbl-div" style="background-color: #5bc0de;">
-            <h3 class="tbl-header">The Group</h3>
-            <h4 class="tbl-header" id="amount-group">0 bitcoins total</h4>
-            <table id="txtable-group"></table>
-          </div>
-        </td>
-        <td>
-          <div class="tbl-div" style="background-color: #5cb85c;">
-            <h3 class="tbl-header">The Individual</h3>
-            <h4 class="tbl-header" id="amount-single">0 bitcoins total</h4>
-            <table id="txtable-single"></table>
-          </div>
-        </td>
-      </tr>
-    </table>
+    <div align="center" class="tbl-div" style="background-color: #5bc0de;">
+      <h4 class="tbl-header" id="amount">0.000 bitcoins total</h4>
+      <table id="txtable" align="center" style="text-align: center;"></table>
+    </div>
+
 
     <script type="text/javascript">
       const updateInterval = 1000;
-      const amounts = {
-        group: 0,
-        single: 0
-      }
+      amount = 0;
 
-      function updateTables() {
-        $.get('/stats', function(data, status, jqXhr) {
-          for (var account in data) {
-            for (tx of data[account].txQueue) {
-              const table = document.getElementById('txtable-' + account);
-              txMsg = '<b>' + tx.userId + '</b> solved <b>' + tx.problem.first + ' ' + tx.problem.op + ' ' + tx.problem.second + ' = ' + tx.answer + '</b> and was awarded <b>' + tx.miningRate + ' bitcoins.</b>';
-              table.innerHTML = '<tr><td>' + txMsg + '</td></tr>' + table.innerHTML;
-            }
-            amounts[account] += data[account].amount;
-            $('#amount-' + account).text(amounts[account].toFixed(3) + ' bitcoins total');
+      function updateTable() {
+        $.get('/articlestats', function(data, status, jqXhr) {
+          amount += data.stats.amount;
+          $('#amount').html(amount.toFixed(3) + ' bitcoins total');
+
+          const table = document.getElementById('txtable');
+          for (tx of data.stats.txQueue) {
+            newTx = '<tr><td><b>' + tx.userId + '</b> mined ' + data.miningRate + ' bitcoin.</td></tr>';
+            table.innerHTML = newTx + table.innerHTML;
           }
         }, 'json');
       }
 
-      setInterval(updateTables, updateInterval);
+      setInterval(updateTable, updateInterval);
     </script>
 
   </body>

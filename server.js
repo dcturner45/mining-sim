@@ -12,11 +12,15 @@ const group = {
     amount: 0
 };
 const single = {
-    id: null,
     txQueue: [],
     amount: 0
 }
 const accounts = {group: group, single: single};
+
+article = {
+    txQueue: [],
+    amount: 0
+}
 
 var problemIdCounter = 0;
 
@@ -58,8 +62,11 @@ function getNewProblem() {
 }
 
 app.get('/stats', function(req, res) {
-    res.send(accounts[req.query.account]);
-    accounts[req.query.account].txQueue = [];
+    res.send(accounts);
+    group.txQueue = [];
+    single.txQueue = [];
+    group.amount = 0;
+    single.amount = 0;
 });
 
 app.get('/statspage', function(req, res) {
@@ -80,7 +87,7 @@ app.get('/getnewproblem', function(req, res) {
     res.send(response);
 });
 
-app.get('/mine', function(req, res) {
+app.get('/', function(req, res) {
     fs.readFile('html/user.html', function(err, data) {
         if (err) {
             console.log(err);
@@ -118,7 +125,59 @@ app.post('/solveproblem', function(req, res) {
     else {
         res.send({err: "answer"});
     }
+});
 
+app.get('/article', function(req, res) {
+    fs.readFile('html/article.html', function(err, data) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.contentType('text/html');
+            res.send(data);
+        }
+    });
+});
+
+app.get('/articlecontent.html', function(req, res) {
+    fs.readFile('html/articlecontent.html', function(err, data) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.contentType('text/html');
+            res.send(data);
+        }
+    });
+});
+
+app.post('/articlemine', function(req, res) {
+    var userId = req.body.userId;
+    if (!/^(\w|\d|\s)+$/.exec(userId)) {
+        res.send({err: 'username'});
+        return;
+    }
+    article.txQueue.push({userId: userId});
+    article.amount += miningRate;
+    res.send({err: null});
+});
+
+app.get('/articlestats', function(req, res) {
+    res.send({stats:article, miningRate: miningRate});
+    article.txQueue = [];
+    article.amount = 0;
+});
+
+app.get('/articlestatspage', function(req, res) {
+    fs.readFile('html/articlestatspage.html', function(err, data) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.contentType('text/html');
+            res.send(data);
+        }
+    });
 });
 
 app.listen(port, () => console.log('listening on port', port));

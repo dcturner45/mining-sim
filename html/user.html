@@ -99,12 +99,12 @@
       }
 
       function correctAnswer() {
-        $("#feedback").text("Correct!");
+        $("#feedback").text("Correct! Fetching new problem...");
         $('#submitButton').prop('disabled', true);
 
         setTimeout(function() {
           getNewProblem();
-        }, 600);
+        }, 2000);
       }
 
       function sendAnswer() {
