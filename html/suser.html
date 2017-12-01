@@ -79,7 +79,7 @@
     <script type="text/javascript">
 
       var problem = null;
-      const account = '<<<ACCOUNT>>>';
+      const account = 'single';
 
       function clearFeedback() {
         $('#feedback').css('display', 'none');
@@ -129,7 +129,6 @@
             else if (data.err == 'answer') {
               $('#feedback').text('Incorrect answer. Please try again.');
             }
-            document.getElementById(data.err).focus();
           }
         });
       }

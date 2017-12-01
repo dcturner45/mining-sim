@@ -16,6 +16,7 @@ const single = {
     txQueue: [],
     amount: 0
 }
+const accounts = {group: group, single: single};
 
 var problemIdCounter = 0;
 
@@ -34,6 +35,19 @@ function solvedProblemCorrectly(problem, answer) {
         && answer == eval('' + problem.first + problem.op + problem.second);
 }
 
+function answer(problem) {
+    if (problem.first >= 0 
+        && problem.first < 10 
+        && problem.second >= 0 
+        && problem.second < 10 
+        && ops.indexOf(problem.op) >= 0) {
+        return eval('' + problem.first + problem.op + problem.second);    
+    }
+    else {
+        return null;
+    };
+}
+
 function getNewProblem() {
     const problem = {};
     problem.id = problemIdCounter++;
@@ -44,7 +58,20 @@ function getNewProblem() {
 }
 
 app.get('/stats', function(req, res) {
-    res.send({'group': groupBtc, 'single': singleBtc});
+    res.send(accounts[req.query.account]);
+    accounts[req.query.account].txQueue = [];
+});
+
+app.get('/statspage', function(req, res) {
+    fs.readFile('html/statspage.html', function(err, data) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.contentType('text/html');
+            res.send(data);
+        }
+    });
 });
 
 app.get('/getnewproblem', function(req, res) {
@@ -60,27 +87,38 @@ app.get('/mine', function(req, res) {
         }
         else {
             res.contentType('text/html');
-            res.send(data);
+            dataStr = data.toString('utf8');
+            dataStr = dataStr.replace('<<<ACCOUNT>>>', 'single' in req.query ? 'single' : 'group');
+            res.send(dataStr);
         }
     });
 })
 
 app.post('/solveproblem', function(req, res) {
     const body = JSON.parse(req.body.content);
-    console.log('the response was', body);
     if (!/^(\d|\w|\s)+$/.exec(body.userId)) {
         res.send({err: 'username'});
         return;
     }
     if (solvedProblemCorrectly(body.problem, body.answer)) {
         res.send({err: null});
-        account = body.userId == single.id ? single : group;
+        account = accounts[body.account];
         account.amount += miningRate;
-        account.txQueue.push('User ' + body.userId + ' solved ' + body.problem.first + ' ' + body.problem.op + ' ' + body.problem.second + ' and was awarded ' + miningRate + ' coins.');
+        tx = {}
+        tx.userId = body.userId;
+        tx.problem = body.problem;
+        tx.miningRate = miningRate;
+        tx.answer = answer(body.problem);
+        account.txQueue.push(tx);
+        console.log('Problem solved correctly.\nStats are now:');
+        console.log(group);
+        console.log(single);
+        console.log('\n');
     }
     else {
         res.send({err: "answer"});
     }
+
 });
 
 app.listen(port, () => console.log('listening on port', port));
