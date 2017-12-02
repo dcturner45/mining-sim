@@ -44,7 +44,7 @@
         username = $("#name").val();
         if (!/^(\w|\d|\s)+$/.exec(username)) {
           document.getElementById("nameinput").focus();
-          alert("Please enter a name. You may only use letters, numbers, and spaces.");
+          alert("Please enter a valid, non-empty name. You may only use letters, numbers, and spaces.");
           return;
         }
         $("#nameinput").remove();
