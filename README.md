@@ -1,6 +1,6 @@
 # mining-sim
 
-This is a website made for a class presentation involving a very basic explanation of bitcoin mining (and the benefits of parallelization in mining) to a non-technical student audience. It consists of two portions: a mining simulation and an article. 
+This is a website made for a class presentation involving a very basic explanation of cryptocurrency (e.g., Bitcoin) mining (and the benefits of parallelization in mining) to a non-technical student audience. It consists of two portions: an explicit mining simulation and an article (which is actually an implicit mining simulation). This simulation is not truly how bitcoins are mined, but it gives an unfamiliar audience an idea of how mining can be distributed across many computers, with each computer doing a minimal amount of work.
 
 In the mining simulation, the students "compete" against the host, where the students solve math problems and contribute to one account as a group, while the host solves math problems and contributes to his/her own account. This is to demonstrate the computing gains realized by splitting up the complex problem of mining into more easily digestible pieces that can be run across multiple computers. A results page shows live progress with names and solved problems to easily demonstrate that the group mines much quicker than the individual. 
 
